@@ -47,6 +47,7 @@ module API
           p[:showSums] = 'true' if query.display_sums?
           p[:groupBy] = query.group_by if query.group_by?
           p[:sortBy] = sort_criteria_to_v3 if query.sorted?
+          p[:'columns[]'] = columns_to_v3
 
           # an empty filter param is also relevant as this would mean to not apply
           # the default filter (status - open)
@@ -64,6 +65,10 @@ module API
         end
 
         private
+
+        def columns_to_v3
+          query.column_names.map { |name| convert_to_v3(name) }
+        end
 
         def sort_criteria_to_v3
           converted = query.sort_criteria.map { |first, last| [convert_to_v3(first), last] }
